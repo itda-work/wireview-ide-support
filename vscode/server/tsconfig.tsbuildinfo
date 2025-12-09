@@ -1,0 +1,1 @@
+{"root":["./src/server.ts","./src/handlers/completion.ts","./src/handlers/definition.ts","./src/handlers/hover.ts","./src/metadata/manager.ts","./src/metadata/types.ts","./src/parser/template.ts"],"version":"5.9.3"}

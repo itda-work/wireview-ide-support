@@ -153,6 +153,8 @@ export class MetadataManager {
       path.join(this.workspaceRoot, "manage.py"),
       path.join(this.workspaceRoot, "src", "manage.py"),
       path.join(this.workspaceRoot, "backend", "manage.py"),
+      path.join(this.workspaceRoot, "tests", "manage.py"),
+      path.join(this.workspaceRoot, "example", "manage.py"),
     ];
 
     for (const candidate of candidates) {

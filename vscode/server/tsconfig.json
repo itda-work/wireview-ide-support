@@ -4,7 +4,7 @@
     "moduleResolution": "Node16",
     "target": "ES2022",
     "lib": ["ES2022"],
-    "outDir": "../out/server",
+    "outDir": "out",
     "rootDir": "src",
     "strict": true,
     "esModuleInterop": true,

@@ -36,9 +36,9 @@ export async function activate(context: ExtensionContext): Promise<void> {
   statusBarItem.show();
   context.subscriptions.push(statusBarItem);
 
-  // Server module path
+  // Server module path (server has its own node_modules)
   const serverModule = context.asAbsolutePath(
-    path.join("out", "server", "server.js")
+    path.join("server", "out", "server.js")
   );
 
   // Debug options for the server
