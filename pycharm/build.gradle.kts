@@ -46,7 +46,7 @@ tasks {
 
     patchPluginXml {
         sinceBuild.set("241")
-        untilBuild.set("251.*")
+        untilBuild.set("252.*")
     }
 
     signPlugin {
@@ -67,7 +67,7 @@ intellijPlatform {
 
         ideaVersion {
             sinceBuild = "241"
-            untilBuild = "251.*"
+            untilBuild = "252.*"
         }
     }
 }

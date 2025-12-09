@@ -15,7 +15,7 @@ class WireviewSettings : PersistentStateComponent<WireviewSettings.State> {
     private var myState = State()
 
     data class State(
-        var pythonPath: String = "python",
+        var pythonPath: String = "python3",
         var djangoSettings: String = "",
         var metadataPath: String = ".wireview/metadata.json",
         var autoRefresh: Boolean = true,
