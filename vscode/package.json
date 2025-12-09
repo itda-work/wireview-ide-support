@@ -1,0 +1,98 @@
+{
+  "name": "django-wireview",
+  "displayName": "django-wireview",
+  "description": "IDE support for django-wireview: autocompletion, go-to-definition, and hover for wireview components",
+  "version": "0.1.0",
+  "publisher": "itda-work",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/itda-work/django-wireview"
+  },
+  "engines": {
+    "vscode": "^1.85.0"
+  },
+  "categories": [
+    "Programming Languages",
+    "Linters"
+  ],
+  "keywords": [
+    "django",
+    "wireview",
+    "liveview",
+    "python",
+    "html",
+    "templates"
+  ],
+  "activationEvents": [
+    "onLanguage:django-html",
+    "onLanguage:html",
+    "workspaceContains:**/manage.py"
+  ],
+  "main": "./out/extension.js",
+  "contributes": {
+    "configuration": {
+      "title": "django-wireview",
+      "properties": {
+        "wireview.pythonPath": {
+          "type": "string",
+          "default": "python",
+          "description": "Path to Python interpreter"
+        },
+        "wireview.djangoSettingsModule": {
+          "type": "string",
+          "default": "",
+          "description": "Django settings module (e.g., myproject.settings)"
+        },
+        "wireview.autoRefreshMetadata": {
+          "type": "boolean",
+          "default": true,
+          "description": "Automatically refresh component metadata when Python files change"
+        },
+        "wireview.metadataPath": {
+          "type": "string",
+          "default": ".wireview/metadata.json",
+          "description": "Path to metadata cache file (relative to workspace root)"
+        }
+      }
+    },
+    "languages": [
+      {
+        "id": "django-html",
+        "aliases": [
+          "Django HTML",
+          "django-html"
+        ],
+        "extensions": [
+          ".html"
+        ],
+        "configuration": "./language-configuration.json"
+      }
+    ]
+  },
+  "scripts": {
+    "vscode:prepublish": "npm run compile",
+    "compile": "tsc -p . && cd server && npm run compile",
+    "compile:client": "tsc -p .",
+    "compile:server": "cd server && npm run compile",
+    "watch": "tsc -p . -w",
+    "watch:server": "cd server && npm run watch",
+    "lint": "eslint src server/src --ext ts",
+    "test": "jest",
+    "package": "vsce package",
+    "publish": "vsce publish",
+    "postinstall": "cd server && npm install"
+  },
+  "devDependencies": {
+    "@types/node": "^20.10.0",
+    "@types/vscode": "^1.85.0",
+    "@typescript-eslint/eslint-plugin": "^6.13.0",
+    "@typescript-eslint/parser": "^6.13.0",
+    "eslint": "^8.54.0",
+    "typescript": "^5.3.0",
+    "@vscode/vsce": "^2.22.0"
+  },
+  "dependencies": {
+    "vscode-languageclient": "^9.0.1"
+  }
+}

@@ -1,0 +1,19 @@
+# Dependencies
+node_modules/
+
+# Build output
+out/
+*.vsix
+
+# VSCode test
+.vscode-test/
+
+# LSP metadata cache
+.wireview/
+
+# OS
+.DS_Store
+
+# IDE
+.idea/
+*.sublime-*
