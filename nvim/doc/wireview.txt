@@ -1,0 +1,299 @@
+*wireview.txt*  Neovim plugin for django-wireview components
+
+Author:  itda-work
+License: MIT
+
+==============================================================================
+CONTENTS                                                    *wireview-contents*
+
+    1. Introduction ........................... |wireview-introduction|
+    2. Requirements ........................... |wireview-requirements|
+    3. Installation ........................... |wireview-installation|
+    4. Configuration .......................... |wireview-configuration|
+    5. Commands ............................... |wireview-commands|
+    6. Keymaps ................................ |wireview-keymaps|
+    7. Completion ............................. |wireview-completion|
+    8. Telescope .............................. |wireview-telescope|
+    9. Troubleshooting ........................ |wireview-troubleshooting|
+
+==============================================================================
+INTRODUCTION                                            *wireview-introduction*
+
+wireview.nvim provides IDE support for django-wireview components in Neovim:
+
+- Autocompletion for components, attributes, handlers, events, and modifiers
+- Go-to-definition for components and handlers
+- Hover documentation
+- Telescope integration for component search
+- which-key integration
+
+==============================================================================
+REQUIREMENTS                                            *wireview-requirements*
+
+- Neovim >= 0.9.0
+- nvim-cmp (for autocompletion)
+- Django project with django-wireview installed
+- Python with `wireview_lsp` management command
+
+Optional:~
+- telescope.nvim (for component picker)
+- which-key.nvim (for keybinding guide)
+
+==============================================================================
+INSTALLATION                                            *wireview-installation*
+
+Using lazy.nvim:~
+>lua
+    {
+      "itda-work/wireview-ide-support",
+      ft = { "htmldjango", "html" },
+      dependencies = {
+        "hrsh7th/nvim-cmp",
+        "nvim-telescope/telescope.nvim", -- optional
+        "folke/which-key.nvim", -- optional
+      },
+      opts = {
+        python_path = "python",
+        django_settings = "",
+        auto_refresh = true,
+      },
+      config = function(_, opts)
+        require("wireview").setup(opts)
+      end,
+    }
+<
+
+Using packer.nvim:~
+>lua
+    use {
+      "itda-work/wireview-ide-support",
+      requires = {
+        "hrsh7th/nvim-cmp",
+        "nvim-telescope/telescope.nvim",
+      },
+      config = function()
+        require("wireview").setup({
+          python_path = "python",
+          auto_refresh = true,
+        })
+      end,
+    }
+<
+
+==============================================================================
+CONFIGURATION                                          *wireview-configuration*
+
+Default configuration:~
+>lua
+    require("wireview").setup({
+      -- Python executable path
+      python_path = "python",
+
+      -- Django settings module (optional)
+      django_settings = "",
+
+      -- Path to metadata JSON file
+      metadata_path = ".wireview/metadata.json",
+
+      -- Auto refresh metadata on startup
+      auto_refresh = true,
+
+      -- Refresh metadata when Python files are saved
+      refresh_on_save = true,
+
+      -- Cache TTL in seconds
+      cache_ttl = 300,
+
+      -- Enable features
+      enable_completion = true,
+      enable_hover = true,
+      enable_definition = true,
+
+      -- Debug logging
+      debug = false,
+    })
+<
+
+                                                       *wireview-python_path*
+python_path ~
+    Path to Python executable. Can be absolute path or just "python" to use
+    system Python.
+
+                                                    *wireview-django_settings*
+django_settings ~
+    Django settings module name (e.g., "myproject.settings"). If set, this
+    will be passed to the `wireview_lsp` command.
+
+                                                     *wireview-metadata_path*
+metadata_path ~
+    Path to the metadata JSON file, relative to project root.
+
+                                                       *wireview-auto_refresh*
+auto_refresh ~
+    When true, automatically refresh metadata when the plugin is loaded.
+
+                                                     *wireview-refresh_on_save*
+refresh_on_save ~
+    When true, automatically refresh metadata when Python files are saved.
+
+                                                          *wireview-cache_ttl*
+cache_ttl ~
+    Time in seconds before cached metadata is considered stale.
+
+==============================================================================
+COMMANDS                                                    *wireview-commands*
+
+                                                           *:WireviewStatus*
+:WireviewStatus
+    Show wireview plugin status including configuration and metadata info.
+
+                                                          *:WireviewRefresh*
+:WireviewRefresh
+    Refresh metadata by running `python manage.py wireview_lsp`.
+
+                                                   *:WireviewGotoDefinition*
+:WireviewGotoDefinition
+    Go to definition of component or handler under cursor.
+
+                                                           *:WireviewHover*
+:WireviewHover
+    Show hover documentation for element under cursor.
+
+==============================================================================
+KEYMAPS                                                      *wireview-keymaps*
+
+Default keymaps (in htmldjango and html files):~
+
+    `gd`  - Go to definition
+    `K`   - Show hover documentation
+
+With which-key (using <leader>w prefix):~
+
+    `<leader>wr`  - Refresh metadata
+    `<leader>ws`  - Show status
+    `<leader>wd`  - Go to definition
+    `<leader>wh`  - Show hover
+    `<leader>wf`  - Find components (Telescope)
+
+To enable which-key integration:~
+>lua
+    require("wireview.whichkey").setup({
+      prefix = "<leader>w", -- customize prefix
+    })
+<
+
+==============================================================================
+COMPLETION                                                *wireview-completion*
+
+wireview provides an nvim-cmp source for autocompletion. It triggers on:
+
+- `'` and `"` - for component names
+- ` ` (space) - for attributes
+- `.` - for event modifiers
+
+Completion types:~
+
+Component names~
+    Triggered in `{% component '...' %}` tags.
+    Provides simple name, fully qualified name, and app:name formats.
+
+Attributes~
+    Triggered after component name.
+    Shows all Pydantic fields with type info.
+
+Event handlers~
+    Triggered in `{% on 'event' '...' %}` tags.
+    Shows async methods from the parent component.
+
+Events~
+    Triggered in `{% on '...' %}` tags.
+    Shows common DOM events (click, input, change, etc.)
+
+Modifiers~
+    Triggered after `.` in event names.
+    Shows available modifiers (prevent, debounce, etc.)
+
+Slots~
+    Triggered in `{% fill ... %}` tags.
+    Shows slots defined in the parent component.
+
+To add wireview to nvim-cmp sources:~
+>lua
+    require("cmp").setup({
+      sources = {
+        { name = "wireview" },
+        -- other sources...
+      },
+    })
+<
+
+==============================================================================
+TELESCOPE                                                  *wireview-telescope*
+
+wireview provides a Telescope picker for searching components.
+
+Usage:~
+>vim
+    :Telescope wireview
+    :Telescope wireview components
+<
+
+Or from Lua:~
+>lua
+    require("wireview.telescope").components()
+<
+
+The picker shows:~
+- Component name and fully qualified name
+- Field count and handler count
+- Preview with full component documentation
+
+Press <CR> to jump to the component definition.
+
+==============================================================================
+TROUBLESHOOTING                                      *wireview-troubleshooting*
+
+Metadata not loading~
+    1. Check that `manage.py` exists in your project
+    2. Run `:WireviewStatus` to see configuration
+    3. Try `:WireviewRefresh` manually
+    4. Check `:messages` for error output
+
+Completion not working~
+    1. Ensure you're in an `htmldjango` or `html` file
+    2. Check that metadata is loaded (`:WireviewStatus`)
+    3. Verify nvim-cmp is configured with wireview source
+
+Go-to-definition not working~
+    1. Check that the component exists in metadata
+    2. Ensure the Python file path is correct
+    3. Run `:WireviewRefresh` to update metadata
+
+Debug logging~
+    Enable debug mode to see detailed logs:
+>lua
+    require("wireview").setup({
+      debug = true,
+    })
+<
+
+Common errors~
+
+"manage.py not found"
+    wireview searches for manage.py in common locations:
+    - ./manage.py
+    - ./src/manage.py
+    - ./backend/manage.py
+    - ./tests/manage.py
+    - ./example/manage.py
+
+"wireview_lsp command not found"
+    Ensure django-wireview is installed and properly configured:
+>bash
+    pip install django-wireview
+    # or in your Django project
+    python manage.py wireview_lsp --help
+<
+
+==============================================================================
+vim:tw=78:ts=8:ft=help:norl:

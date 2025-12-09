@@ -31,7 +31,20 @@ django-wireview IDE 플러그인 프로젝트 인수인계 문서입니다.
 | 호버 문서 | ✅ | docstring, 필드, 슬롯 정보 |
 | 빌드 & 패키징 | ✅ | `.vsix` 파일 생성 |
 
-### Phase 2: Neovim 플러그인 ⏳ 대기
+### Phase 2: Neovim 플러그인 ✅ 완료
+
+| 항목 | 상태 | 설명 |
+|------|------|------|
+| Lua 플러그인 기본 구조 | ✅ | `nvim/lua/wireview/` |
+| 설정 시스템 | ✅ | `nvim/lua/wireview/config.lua` |
+| 메타데이터 로딩 | ✅ | `nvim/lua/wireview/metadata.lua` |
+| 템플릿 파서 | ✅ | `nvim/lua/wireview/parser.lua` |
+| nvim-cmp 자동완성 | ✅ | `nvim/lua/wireview/completion.lua` |
+| Go to Definition | ✅ | `nvim/lua/wireview/definition.lua` |
+| 호버 문서 | ✅ | `nvim/lua/wireview/hover.lua` |
+| Telescope 통합 | ✅ | `nvim/lua/wireview/telescope.lua` |
+| Which-key 통합 | ✅ | `nvim/lua/wireview/whichkey.lua` |
+| 문서화 | ✅ | `nvim/doc/wireview.txt`, `nvim/README.md` |
 
 ### Phase 3: PyCharm 플러그인 📋 계획
 
@@ -49,31 +62,46 @@ wireview-ide-support/
 ├── Makefile                 # 빌드/메타데이터 생성 명령
 ├── README.md
 ├── HANDOVER.md              # 이 문서
-└── vscode/                  # VSCode 확장
-    ├── package.json
-    ├── tsconfig.json
-    ├── language-configuration.json
-    ├── django-wireview-0.1.0.vsix  # 패키징된 확장
-    ├── src/
-    │   └── extension.ts     # 확장 진입점
-    ├── server/
-    │   ├── package.json
-    │   ├── tsconfig.json
-    │   ├── node_modules/    # 서버 의존성
-    │   ├── out/             # 컴파일된 서버
-    │   └── src/
-    │       ├── server.ts            # LSP 서버 메인
-    │       ├── metadata/
-    │       │   ├── types.ts         # 메타데이터 타입 정의
-    │       │   └── manager.ts       # Python 실행 & 캐시 관리
-    │       ├── parser/
-    │       │   └── template.ts      # Django 템플릿 파싱
-    │       └── handlers/
-    │           ├── completion.ts    # 자동완성
-    │           ├── definition.ts    # Go to Definition
-    │           └── hover.ts         # 호버 정보
-    ├── out/                 # 컴파일된 클라이언트
-    └── node_modules/        # 클라이언트 의존성
+├── vscode/                  # VSCode 확장
+│   ├── package.json
+│   ├── tsconfig.json
+│   ├── language-configuration.json
+│   ├── django-wireview-0.1.0.vsix  # 패키징된 확장
+│   ├── src/
+│   │   └── extension.ts     # 확장 진입점
+│   ├── server/
+│   │   ├── package.json
+│   │   ├── tsconfig.json
+│   │   └── src/
+│   │       ├── server.ts            # LSP 서버 메인
+│   │       ├── metadata/
+│   │       │   ├── types.ts         # 메타데이터 타입 정의
+│   │       │   └── manager.ts       # Python 실행 & 캐시 관리
+│   │       ├── parser/
+│   │       │   └── template.ts      # Django 템플릿 파싱
+│   │       └── handlers/
+│   │           ├── completion.ts    # 자동완성
+│   │           ├── definition.ts    # Go to Definition
+│   │           └── hover.ts         # 호버 정보
+│   └── out/                 # 컴파일된 클라이언트
+└── nvim/                    # Neovim 플러그인
+    ├── lua/
+    │   └── wireview/
+    │       ├── init.lua           # 플러그인 진입점
+    │       ├── config.lua         # 설정 관리
+    │       ├── metadata.lua       # Python 메타데이터 로더 & 캐시
+    │       ├── parser.lua         # 템플릿 파싱
+    │       ├── completion.lua     # nvim-cmp 소스
+    │       ├── definition.lua     # Go-to-definition 핸들러
+    │       ├── hover.lua          # Floating window hover
+    │       ├── telescope.lua      # Telescope 확장
+    │       ├── whichkey.lua       # Which-key 통합
+    │       └── utils.lua          # 공유 유틸리티
+    ├── plugin/
+    │   └── wireview.lua           # 자동 로드
+    ├── doc/
+    │   └── wireview.txt           # Vim help 문서
+    └── README.md
 ```
 
 ---
@@ -105,7 +133,7 @@ code --install-extension vscode/django-wireview-0.1.0.vsix
 ┌─────────────────────────────────────────────────────────┐
 │                    IDE Plugins                          │
 ├──────────────────┬──────────────────┬──────────────────┤
-│  VSCode (완료)   │  Neovim (대기)   │ PyCharm (계획)   │
+│  VSCode (완료)   │  Neovim (완료)   │ PyCharm (계획)   │
 │  TypeScript LSP  │  Lua Plugin      │ Kotlin Plugin    │
 └────────┬─────────┴────────┬─────────┴────────┬─────────┘
          │                  │                  │
@@ -163,49 +191,47 @@ code --install-extension vscode/django-wireview-0.1.0.vsix
 
 ---
 
-## Phase 2: Neovim 플러그인 계획
+## Phase 2: Neovim 플러그인 (완료)
 
-### 구조
-
-```
-nvim/
-├── lua/
-│   └── wireview/
-│       ├── init.lua          # 플러그인 진입점
-│       ├── metadata.lua      # Python 메타데이터 로더
-│       ├── completion.lua    # nvim-cmp 소스
-│       ├── definition.lua    # Go to Definition
-│       └── parser.lua        # 템플릿 파싱
-├── plugin/
-│   └── wireview.lua          # 자동 로드
-└── README.md
-```
-
-### 구현 작업
-
-- [ ] Lua 플러그인 기본 구조 생성
-- [ ] Python 메타데이터 추출기 호출 (`wireview_lsp` 재사용)
-- [ ] 메타데이터 JSON 파싱 및 캐싱
-- [ ] nvim-cmp 완성 소스 구현
-- [ ] Treesitter 또는 Lua 패턴 매칭으로 템플릿 파싱
-- [ ] `vim.lsp.buf.definition()` 스타일 정의 이동
-- [ ] 호버 정보 (floating window)
-
-### Neovim 특화 기능 (선택)
-
-- [ ] Telescope 통합 (컴포넌트 검색)
-- [ ] Which-key 통합 (키바인딩 가이드)
-- [ ] Treesitter 하이라이팅 (wireview 태그)
-
-### 설정 예시
+### 설치
 
 ```lua
-require("wireview").setup({
-  python_path = "python",
-  django_settings = "myproject.settings",
-  auto_refresh = true,
-})
+-- lazy.nvim
+{
+  "itda-work/wireview-ide-support",
+  ft = { "htmldjango", "html" },
+  dependencies = {
+    "hrsh7th/nvim-cmp",
+    "nvim-telescope/telescope.nvim", -- optional
+    "folke/which-key.nvim", -- optional
+  },
+  opts = {
+    python_path = "python",
+    django_settings = "", -- e.g., "myproject.settings"
+    auto_refresh = true,
+  },
+}
 ```
+
+### 기능
+
+- **자동완성**: 컴포넌트, 속성, 핸들러, 이벤트, 수정자
+- **Go-to-Definition**: 컴포넌트 및 핸들러 정의로 이동
+- **Hover**: Floating window로 문서 표시
+- **Telescope**: 컴포넌트 검색 (`:Telescope wireview`)
+- **Which-key**: 키바인딩 가이드 (`<leader>w` prefix)
+
+### 명령어
+
+- `:WireviewStatus` - 플러그인 상태 표시
+- `:WireviewRefresh` - 메타데이터 새로고침
+- `:WireviewGotoDefinition` - 정의로 이동
+- `:WireviewHover` - 호버 문서 표시
+
+### 키맵 (Django 템플릿 파일에서)
+
+- `gd` - Go to definition
+- `K` - Show hover
 
 ---
 
