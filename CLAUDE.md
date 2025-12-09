@@ -7,7 +7,8 @@ django-wireview를 위한 IDE 플러그인 프로젝트
 ```
 wireview-ide-support/
 ├── vscode/          # VSCode 확장 (완료)
-├── nvim/            # Neovim 플러그인 (개발중)
+├── nvim/            # Neovim 플러그인 (완료)
+├── pycharm/         # PyCharm 플러그인 (개발중)
 └── docs/            # 문서
 ```
 
@@ -64,6 +65,19 @@ gh issue comment <번호> --body "작업 진행 중..."
 | #10 | Telescope 통합 | 구현완료 |
 | #11 | Which-key 통합 및 문서화 | 구현완료 |
 
+## PyCharm 플러그인 이슈 목록
+
+| 이슈 | 제목 | 상태 |
+|------|------|------|
+| #12 | 플러그인 프로젝트 구조 및 설정 | 진행중 |
+| #13 | 메타데이터 서비스 | 진행중 |
+| #14 | Django 템플릿 파서 | 진행중 |
+| #15 | 자동완성 (Completion Contributor) | 진행중 |
+| #16 | Go to Definition (Reference Contributor) | 진행중 |
+| #17 | 호버 문서 (Documentation Provider) | 진행중 |
+| #18 | 액션 및 UI | 대기 |
+| #19 | 테스트 및 문서화 | 대기 |
+
 ## 개발 명령어
 
 ```bash
@@ -75,6 +89,12 @@ make build
 
 # VSCode 확장 설치
 code --install-extension vscode/django-wireview-0.1.0.vsix
+
+# PyCharm 플러그인 빌드
+cd pycharm && ./gradlew buildPlugin
+
+# PyCharm 플러그인 개발 실행
+cd pycharm && ./gradlew runIde
 ```
 
 ## 참고

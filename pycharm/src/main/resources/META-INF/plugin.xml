@@ -1,0 +1,96 @@
+<idea-plugin>
+    <id>com.itdawork.wireview</id>
+    <name>django-wireview</name>
+    <vendor email="support@itda.work" url="https://github.com/itda-work">itda-work</vendor>
+
+    <description><![CDATA[
+    IDE support for <a href="https://github.com/itda-work/django-wireview">django-wireview</a> components.
+
+    <h3>Features</h3>
+    <ul>
+        <li>Autocompletion for components, attributes, handlers, events, and modifiers</li>
+        <li>Go-to-definition for components and handlers</li>
+        <li>Hover documentation</li>
+        <li>Metadata refresh from Python</li>
+    </ul>
+
+    <h3>Usage</h3>
+    <ol>
+        <li>Install django-wireview in your Django project</li>
+        <li>Open a Django template file (*.html)</li>
+        <li>Use Ctrl+Space for autocompletion in wireview tags</li>
+        <li>Use Ctrl+Click or Ctrl+B for go-to-definition</li>
+        <li>Use Ctrl+Q for hover documentation</li>
+    </ol>
+    ]]></description>
+
+    <change-notes><![CDATA[
+    <h3>0.1.0</h3>
+    <ul>
+        <li>Initial release</li>
+        <li>Basic autocompletion for wireview components</li>
+        <li>Go-to-definition support</li>
+        <li>Hover documentation</li>
+    </ul>
+    ]]></change-notes>
+
+    <depends>com.intellij.modules.platform</depends>
+    <depends>com.intellij.modules.python</depends>
+
+    <extensions defaultExtensionNs="com.intellij">
+        <!-- Project Service -->
+        <projectService
+            serviceImplementation="com.itdawork.wireview.services.MetadataService"/>
+
+        <!-- Application Service for Settings -->
+        <applicationService
+            serviceImplementation="com.itdawork.wireview.settings.WireviewSettings"/>
+
+        <!-- Settings Configurable -->
+        <applicationConfigurable
+            parentId="tools"
+            instance="com.itdawork.wireview.settings.WireviewConfigurable"
+            id="com.itdawork.wireview.settings"
+            displayName="django-wireview"/>
+
+        <!-- Completion Contributor -->
+        <completion.contributor
+            language="HTML"
+            implementationClass="com.itdawork.wireview.completion.WireviewCompletionContributor"
+            order="first"/>
+
+        <!-- Reference Contributor -->
+        <psi.referenceContributor
+            language="HTML"
+            implementation="com.itdawork.wireview.references.WireviewReferenceContributor"/>
+
+        <!-- Documentation Provider -->
+        <lang.documentationProvider
+            language="HTML"
+            implementationClass="com.itdawork.wireview.documentation.WireviewDocumentationProvider"
+            order="first"/>
+
+        <!-- Startup Activity -->
+        <postStartupActivity
+            implementation="com.itdawork.wireview.WireviewStartupActivity"/>
+
+        <!-- Notification Group -->
+        <notificationGroup
+            id="Wireview Notifications"
+            displayType="BALLOON"/>
+    </extensions>
+
+    <actions>
+        <group id="Wireview.Menu" text="Wireview" popup="true">
+            <add-to-group group-id="ToolsMenu" anchor="last"/>
+            <action id="Wireview.Refresh"
+                    class="com.itdawork.wireview.actions.RefreshMetadataAction"
+                    text="Refresh Metadata"
+                    description="Refresh wireview metadata from Python"/>
+            <action id="Wireview.Status"
+                    class="com.itdawork.wireview.actions.ShowStatusAction"
+                    text="Show Status"
+                    description="Show wireview plugin status"/>
+        </group>
+    </actions>
+</idea-plugin>
